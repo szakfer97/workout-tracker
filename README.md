@@ -1,4 +1,4 @@
-#workout-tracker
+# workout-tracker
 
 Workout tracker with Vue and TypeScript
 
