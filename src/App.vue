@@ -41,11 +41,11 @@ watch(exercises, calculateTotalCalories)
 </script>
 
 <template>
-  <div class="container mx-auto px-4 py-10">
-    <h1 class="text-4xl text-center font-bold mb-10">Workout Calculator</h1>
+  <div class="container mx-auto px-4 py-10 md:px-6 lg:px-12">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-10">Workout Calculator</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="exercise in exercises" :key="exercise.name" class="bg-white p-6 rounded-lg shadow-sm">
-        <h2 class="text-lg font-bold mb-4">{{ exercise.name }}</h2>
+      <div v-for="exercise in exercises" :key="exercise.name" class="bg-white p-6 rounded-lg shadow-md md:p-8 lg:p-10">
+        <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">{{ exercise.name }}</h2>
         <p>
           <span class="font-bold">Calories:</span>
           {{ exercise.calories }}
@@ -68,41 +68,9 @@ watch(exercises, calculateTotalCalories)
         @click="calculateTotalCalories">
         Calculate
       </button>
-      <h2 class="text-2xl font-bold mt-6">
+      <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mt-6">
         Total calories burned: {{ totalCalories }}
       </h2>
     </div>
   </div>
 </template>
-
-<style scoped>
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.grid {
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
-}
-
-@media (min-width: 640px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  }
-}
-
-@media (min-width: 1280px) {
-  .grid {
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  }
-}
-
-</style>
