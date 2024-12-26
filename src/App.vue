@@ -7,69 +7,34 @@ interface Exercise {
   duration: number;
 }
 
-const exercises = ref<Exercise[]>([
-  {
-    name: "Walking",
-    calories: 150,
-    duration: 30,
-  },
-  {
-    name: "Jogging",
-    calories: 350,
-    duration: 30,
-  },
-  {
-    name: "Running",
-    calories: 500,
-    duration: 30,
-  },
-  {
-    name: "Swimming",
-    calories: 200,
-    duration: 30,
-  },
-  {
-    name: "Push-ups",
-    calories: 100,
-    duration: 15,
-  },
-  {
-    name: "Squats",
-    calories: 200,
-    duration: 30,
-  },
-  {
-    name: "Deadlifts",
-    calories: 300,
-    duration: 45,
-  },
-  {
-    name: "Plank",
-    calories: 50,
-    duration: 30,
-  },
-]);
+const exercises = ref<Exercise[]>([]);
+const newExercise = ref<Exercise>({
+  name: "",
+  calories: 0,
+  duration: 0,
+});
 
 const totalCalories = ref(0);
-const newExercise = ref<Exercise>({ name: "", calories: 0, duration: 0 });
 
 function calculateTotalCalories() {
   totalCalories.value = exercises.value.reduce(
-    (total, exercise) => total + exercise.calories * (exercise.duration / 60),
+    (total, exercise) => total + exercise.calories,
     0
   );
 }
 
-function addExercise() {
+const addExercise = () => {
   if (
     newExercise.value.name &&
     newExercise.value.calories > 0 &&
     newExercise.value.duration > 0
   ) {
     exercises.value.push({ ...newExercise.value });
-    newExercise.value = { name: "", calories: 0, duration: 0 };
+    newExercise.value.name = "";
+    newExercise.value.calories = 0;
+    newExercise.value.duration = 0;
   }
-}
+};
 
 function removeExercise(index: number) {
   exercises.value.splice(index, 1);
@@ -124,20 +89,8 @@ watch(exercises, calculateTotalCalories);
       </div>
     </div>
     <div class="mt-10 text-center">
-      <button
-        type="button"
-        class="px-4 py-2 font-bold text-purple-500 bg-white rounded-md hover:bg-purple-600 hover:text-white"
-        @click="calculateTotalCalories"
-      >
-        Calculate
-      </button>
-      <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mt-6 text-white">
-        Total calories burned: {{ totalCalories }}
-      </h2>
-    </div>
-    <div class="mt-10 text-center">
       <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-white">
-        Add New Exercise
+        New Exercise
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <input
@@ -166,6 +119,18 @@ watch(exercises, calculateTotalCalories);
       >
         Add Exercise
       </button>
+    </div>
+    <div class="mt-10 text-center">
+      <button
+        type="button"
+        class="px-4 py-2 font-bold text-purple-500 bg-white rounded-md hover:bg-purple-600 hover:text-white"
+        @click="calculateTotalCalories"
+      >
+        Calculate
+      </button>
+      <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mt-6 text-white">
+        Total calories burned: {{ totalCalories }}
+      </h2>
     </div>
   </div>
 </template>
