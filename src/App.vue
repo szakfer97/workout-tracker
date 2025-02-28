@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 interface Exercise {
   name: string;
@@ -14,33 +14,43 @@ const newExercise = ref<Exercise>({
   duration: 0,
 });
 
-const totalCalories = ref(0);
+const totalCalories = computed(() => {
+  return exercises.value.reduce((total, exercise) => {
+    return total + exercise.calories * (exercise.duration / 60);
+  }, 0);
+});
 
-function calculateTotalCalories() {
-  totalCalories.value = exercises.value.reduce(
-    (total, exercise) => total + exercise.calories,
-    0
-  );
+function saveExercises() {
+  localStorage.setItem("exercises", JSON.stringify(exercises.value));
 }
 
-const addExercise = () => {
+function loadExercises() {
+  const savedExercises = localStorage.getItem("exercises");
+  if (savedExercises) {
+    exercises.value = JSON.parse(savedExercises);
+  }
+}
+
+function addExercise() {
   if (
     newExercise.value.name &&
     newExercise.value.calories > 0 &&
     newExercise.value.duration > 0
   ) {
     exercises.value.push({ ...newExercise.value });
-    newExercise.value.name = "";
-    newExercise.value.calories = 0;
-    newExercise.value.duration = 0;
+    newExercise.value = { name: "", calories: 0, duration: 0 };
+    saveExercises();
   }
-};
+}
 
 function removeExercise(index: number) {
   exercises.value.splice(index, 1);
+  saveExercises();
 }
 
-watch(exercises, calculateTotalCalories);
+onMounted(() => {
+  loadExercises();
+});
 </script>
 
 <template>
@@ -88,49 +98,60 @@ watch(exercises, calculateTotalCalories);
         </button>
       </div>
     </div>
-    <div class="mt-10 text-center">
+    <div class="my-8 text-center">
       <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-white">
         New Exercise
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <input
-          type="text"
-          placeholder="Exercise Name"
-          v-model="newExercise.name"
-          class="p-2 rounded-md border-gray-300"
-        />
-        <input
-          type="number"
-          placeholder="Calories"
-          v-model="newExercise.calories"
-          class="p-2 rounded-md border-gray-300"
-        />
-        <input
-          type="number"
-          placeholder="Duration (minutes)"
-          v-model="newExercise.duration"
-          class="p-2 rounded-md border-gray-300"
-        />
+        <label class="block text-2xl font-medium text-white"
+          >Exercise Name</label
+        >
+        <label class="block text-2xl font-medium text-white"
+          >Burned Calories</label
+        >
+        <label class="block text-2xl font-medium text-white"
+          >Exercise Duration</label
+        >
       </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <input
+        type="text"
+        placeholder="Exercise Name"
+        v-model="newExercise.name"
+        class="p-2 rounded-md border-gray-300"
+      />
+      <input
+        type="number"
+        placeholder="Calories"
+        v-model="newExercise.calories"
+        class="p-2 rounded-md border-gray-300"
+      />
+      <input
+        type="number"
+        placeholder="Duration (minutes)"
+        v-model="newExercise.duration"
+        class="p-2 rounded-md border-gray-300"
+      />
+    </div>
+    <div class="mt-8 mb-6 flex justify-center">
       <button
-        type="button"
-        class="mt-4 px-4 py-2 font-bold text-purple-500 bg-white rounded-md hover:bg-purple-600 hover:text-white"
         @click="addExercise"
+        class="px-4 py-2 font-bold rounded-md transition duration-300 text-purple-500 bg-white hover:bg-purple-600 hover:text-white"
       >
         Add Exercise
       </button>
     </div>
-    <div class="mt-10 text-center">
-      <button
-        type="button"
-        class="px-4 py-2 font-bold text-purple-500 bg-white rounded-md hover:bg-purple-600 hover:text-white"
-        @click="calculateTotalCalories"
-      >
-        Calculate
-      </button>
-      <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mt-6 text-white">
-        Total calories burned: {{ totalCalories }}
-      </h2>
-    </div>
+  </div>
+  <div class="text-center">
+    <button
+      type="button"
+      class="px-4 py-2 font-bold text-purple-500 bg-white rounded-md hover:bg-purple-600 hover:text-white"
+    >
+      Calculate
+    </button>
+    <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold mt-6 text-white">
+      Total calories burned: {{ totalCalories }}
+    </h2>
   </div>
 </template>
